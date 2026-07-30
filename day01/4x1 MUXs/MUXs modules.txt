@@ -1,0 +1,115 @@
+module mux4_1_BEHV
+(
+  input wire A,B,C,D,
+  
+  input wire sel0,sel1,
+
+  output reg out
+
+
+);
+
+// using nested case in an always block 
+
+  always@(*) begin
+
+     case(sel0)
+        1'b0: case(sel1)
+                 1'b0: out = A;
+                 1'b1: out = B;
+              endcase
+        1'b1: case(sel1)
+                 1'b0: out = C;
+                 1'b1: out = D;
+              endcase 
+
+     endcase
+
+  end
+endmodule 
+
+
+
+---------------------------------------------
+
+
+module mux2_1
+(
+  input wire a,b,sel,
+  output wire f
+
+
+);
+  wire w1,w2,sel_0;
+
+  assign sel_0 = ~sel;
+  assign w1 = b & sel;
+  assign w2 = a & sel_0;
+  assign f = w1 | w2;
+
+
+
+
+endmodule
+
+
+----------------------------------------------
+
+
+module mux4x1_ST
+(
+
+  input wire A,B,C,D,
+
+  input wire sel0,sel1,
+
+  output wire out
+
+);
+  
+  // using the 2x1 mux module we've made already to make the ST module
+  
+  wire w1,w2;
+
+  mux2_1 m0 ( .a(A), .b(B), .sel(sel0), .f(w1) );
+  mux2_1 m1 ( .a(C), .b(D), .sel(sel0), .f(w2) );
+  mux2_1 m2 ( .a(w1), .b(w2), .sel(sel1), .f(out) );
+
+
+
+
+endmodule
+
+
+------------------------------------------------
+
+
+module mux4x1_GL
+(
+  input wire A,B,C,D,
+  
+  input wire sel0,sel1,
+
+  output wire out
+
+
+);
+  wire sel0_,sel1_,and0,and1,and2,and3;
+
+  assign sel0_=~sel0;
+  assign sel1_=~sel1;
+  assign and0 = A & sel0_ & sel1_;
+  assign and1 = B & sel0  & sel1_;
+  assign and2 = C & sel0_ & sel1;
+  assign and3 = D & sel0  & sel1;
+
+  assign out = and0 | and1 | and2 | and3;
+
+
+endmodule 
+
+
+
+
+
+

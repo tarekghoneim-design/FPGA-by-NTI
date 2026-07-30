@@ -1,0 +1,81 @@
+module FA_Behaviral
+(
+  input  wire A, 
+  input  wire B,
+  input  wire Cin,
+  
+  output reg sum,
+  output reg cout
+);
+  
+  always@(*) 
+    begin
+      {cout, sum} = A + B + Cin;  
+	end
+  
+  
+  
+endmodule
+
+
+
+------------------------------------------
+
+module HA_Behav
+(
+  input  wire A, 
+  input  wire B,
+  
+  output wire sum,
+  output wire cout
+);
+
+  assign {cout, sum} = A + B;  
+  
+endmodule
+
+
+
+------------------------------------------
+
+module FA_Struct
+(
+  input  wire A,B,Cin 
+ 
+  output wire sum,
+  output wire cout
+);
+
+  // internal signals
+  wire cout0, sum0, cout1;
+  
+  // modules instantiation
+  HA_Behav HA0 (.A(A), .B(B), .sum(sum0), .cout(cout0));
+  HA_Behav HA1 (.A(Cin), .B(sum0), .sum(sum), .cout(cout1));
+  
+
+  assign cout = cout0 | cout1;
+
+  
+endmodule
+
+--------------------------------------------
+
+
+module FA_GL
+(
+  input  wire A,B,Cin 
+  
+  output wire sum,
+  output wire cout
+);
+
+  assign sum = A ^ B ^ Cin;
+  
+  // Kmap Logic
+  //assign cout = (A & B)|(A & Cin)|(B & Cin);
+  
+  // Two stages HA
+  assign cout = (Cin & (A^B)) | ( A & B);
+  
+endmodule
