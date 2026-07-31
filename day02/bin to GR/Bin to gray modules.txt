@@ -24,4 +24,17 @@ endmodule
 
 ---------------------------------------
 
+// using shift property learned in the session
+
+module bin_gray_shift
+(
+  input [3:0] bin,
+  output [3:0] gray
+
+
+);
+
+assign gray = bin ^ (bin >> 1);
+
+endmodule 
 
