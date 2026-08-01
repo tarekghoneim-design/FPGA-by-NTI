@@ -1,0 +1,144 @@
+// decoder 2-4 with multiple ways and its test bench 
+
+module decoder2_4
+(
+  input wire i0,i1,
+  input wire en,
+  
+  output reg [3:0] f
+
+
+
+);
+
+  // this was my first attempt to make it using case statment in always block  
+
+
+  always@(*)
+    begin
+	  
+	  case(en)
+	    
+	    1'b1 :
+		begin
+		f[3] = ~i0 & ~i1;
+		f[2] = i0 & ~i1;
+		f[1] = ~i0 & i1;
+		f[0] = i0 & i1;
+		end
+		1'b0 : f = 0;
+		
+	  endcase
+    end
+
+endmodule
+
+
+
+-------------------------------------------------------------
+
+module decoder2_4
+(
+parameter N = 2
+)
+
+  // this is called parametrized property we can use it to change a variable
+  // in the hole code and control it without knowing what's inside it 
+
+
+  // parameter N here used for the above module for the decoder 2-4
+
+(
+  input wire [N-1:0]A,
+  input wire en,
+  
+  output reg [(2**N)-1:0] f
+
+
+);
+
+
+
+-----------------------------------------------------------------
+
+ 
+  // in this always block for also making a 2-4 decoder using rhe if  
+  //statement without else leading to something called latch which is at this
+  // point is unintentional, to avoid that latch we have to put an initial 
+  // value fo the F
+
+always@(*)
+    begin
+      //initial value
+      //F = 4'b0000;
+      //F = {N{1'b0}};
+	F = 'b0;
+	  if(en)
+	    begin
+		  case(A)
+		    2'b00: F = 4'b0001;
+		    2'b01: F = 4'b0010;
+		    2'b10: F = 4'b0100;
+		    2'b11: F = 4'b1000;
+		    default: F = 4'b0000;
+		  endcase
+		end
+
+
+
+
+------------------------------------------------------------------------
+
+
+module test_bench;
+
+// TB signals 
+
+  reg i0;
+  reg i1;
+  reg en;
+  
+  wire [3:0] f;
+  
+  // test bench used for testing the 2-4 decoder
+  
+  decoder2_4 d0
+  (
+    .i0(i0),
+	.i1(i1),
+	.en(en),
+	.f(f)
+  
+  
+  );
+  
+   
+  
+  // Stimuls generation
+  initial
+    begin
+	  i0 = 1'b0; i1 = 1'b0; en = 1'b1;  
+	  #10;
+	  
+	  i0 = 1'b1; i1 = 1'b0; en = 1'b1; 
+	  #10;
+
+	  i0 = 1'b0; i1 = 1'b1; en = 1'b1; 
+	  #10;	  
+	  
+	  i0 = 1'b1; i1 = 1'b1; en = 1'b1; 
+	  #10;		
+	  
+	  i0 = 1'b1; i1 = 1'b0; en = 1'b0;
+	  #10;	
+	  
+	  $stop;
+	end
+  
+endmodule
+
+
+
+
+
+	
