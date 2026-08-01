@@ -1,0 +1,85 @@
+module bin_to_7seg 
+(
+  input wire [3:0] bin,
+
+  output reg [7:1] seg 
+
+);
+
+  //seg from 7 to 1 is equivalent to from g to a 
+  // note: this outputs are active high!!
+
+  always @(*) begin 
+    // using k mapping 
+    seg[1] =  bin[1] | bin[3] | ~(bin[2] ^ bin[0]);
+    seg[2] = ~bin[2] | ~(bin[0] ^ bin[1]);
+    seg[3] =  bin[2] | ~bin[1] | bin[0];
+    seg[4] =  bin[3] | (~bin[2] & bin[1]) | (~bin[0] & bin[1]) | (~bin[2] & ~bin[0]) | (bin[2] & ~bin[1] & bin[0]);
+    seg[5] = ~bin[0] & (~bin[2] | bin[1]);
+    seg[6] =  bin[3] | ~(bin[1] | bin[0]) | ( bin[2] & (~bin[1] | ~bin[0]));
+    seg[7] =  bin[3] | (~bin[0] & bin[1]) | (bin[2] ^ bin[1]);
+
+
+  end
+
+
+
+endmodule 
+
+
+
+-------------------------------------------------
+
+
+module tb_bin_seg;
+
+ // test bench for the binary to 7 segment decoder 
+  reg [3:0] bin;
+  
+  wire [1:7] seg;
+
+  bin_to_7seg s0
+
+(
+  .bin(bin),
+ 
+  .seg(seg)
+
+);
+
+// Stimuls generation
+  initial
+    begin
+	  bin = 4'b0000; 
+	  #10;
+	  
+	  bin = 4'b0001;  
+	  #10;
+
+	  bin = 4'b0010; 
+	  #10;	  
+	  
+	  bin = 4'b0011;  
+	  #10;	
+	
+	  bin = 4'b0100;  
+	  #10;	
+	  
+	  bin = 4'b0101; 
+	  #10;	
+
+	  bin = 4'b0110; 
+	  #10;	
+
+	  bin = 4'b0111; 
+	  #10;		
+
+	  bin = 4'b1000; 
+	  #10;	
+
+	  bin = 4'b1001; 
+	  #10;	  
+	  $stop;
+	end
+  
+endmodule
