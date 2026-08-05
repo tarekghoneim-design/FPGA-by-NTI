@@ -1,0 +1,94 @@
+module light_shaser
+(
+  
+  input wire HOLD,
+  input wire reset,
+  input wire clk,
+  
+  output reg [3:0]SROUT
+
+);
+
+  initial 
+    begin
+    
+	  SROUT = 4'b0111;
+	
+	end
+
+    
+
+
+  always@(negedge clk, negedge reset, negedge HOLD)
+    
+	 
+	begin
+      if (!reset)  
+	    SROUT <= 4'b0111;
+
+      else if (!HOLD)
+          	SROUT <= SROUT;  
+	  else
+	    begin
+		  SROUT[3] <= SROUT[0];
+		  SROUT[2] <= SROUT[3];
+		  SROUT[1] <= SROUT[2];
+		  SROUT[0] <= SROUT[1];
+		end
+		 
+    end
+	
+endmodule 
+  
+
+
+
+-------------------------------------------------------------------------------
+
+
+`timescale 1ns / 1ps
+
+ module tb_light_shaser;
+
+  
+  reg HOLD;
+  reg reset;
+  reg clk;
+  
+  wire [3:0]SROUT;
+  
+  
+  light_shaser l0
+  
+  (
+    .HOLD(HOLD),
+	.reset(reset),
+	.clk(clk),
+	.SROUT(SROUT)
+  
+  );
+  
+  always #5 clk = ~clk;
+ 
+ initial 
+
+    begin
+      clk ='b0;
+	  reset = 'b1;
+	  HOLD = 'b1;
+	  #15
+	  HOLD = 'b0;
+	  #15
+	  HOLD = 'b1;
+	  
+	  #15
+	  reset = 'b0;
+	  #15
+	  reset = 'b1;
+	  #15
+	  $stop;
+
+
+	end
+ 
+endmodule
